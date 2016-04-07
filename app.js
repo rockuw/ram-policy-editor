@@ -23,13 +23,13 @@ var ActionList = [
   {
     label: 'Object',
     children: [
-     'oss:GetObject',
-     'oss:PutObject',
-     'oss:DeleteObject',
-     'oss:GetObjectAcl',
-     'oss:PutObjectAcl',
-     'oss:ListParts',
-     'oss:AbortMultipartUpload',
+      'oss:GetObject',
+      'oss:PutObject',
+      'oss:DeleteObject',
+      'oss:GetObjectAcl',
+      'oss:PutObjectAcl',
+      'oss:ListParts',
+      'oss:AbortMultipartUpload',
       'oss:ListObjects',
     ]
   },
@@ -166,66 +166,76 @@ var RuleEditor = React.createClass({
     });
 
     return (
-        <div className="ruleEditor">
+      <div className="ruleEditor">
         <h2>Add rule:</h2>
         <form className="form-horizontal" onSubmit={this.handleSubmit}>
-        <div className="form-group">
-        <label className="col-sm-2 control-label">Effect</label>
-        <div className="col-sm-10">
-        <select className="form-control" value={this.state.Effect} onChange={this.handleEffectChange}>
-          {selectEffect}
-        </select>
-        </div>
-        </div>
+          <div className="form-group">
+            <label className="col-sm-2 control-label">Effect</label>
+            <div className="col-sm-10">
+              <select
+                  className="form-control"
+                  value={this.state.Effect}
+                  onChange={this.handleEffectChange}>
+                {selectEffect}
+              </select>
+            </div>
+          </div>
 
-        <div className="form-group">
-        <label className="col-sm-2 control-label">Actions</label>
-        <div className="col-sm-10">
-        <MultiSelect multiple maxHeight={300} data={selectAction} onChange={this.handleActionChange} />
-        </div>
-        </div>
+          <div className="form-group">
+            <label className="col-sm-2 control-label">Actions</label>
+            <div className="col-sm-10">
+              <MultiSelect
+                  multiple
+                  maxHeight={300}
+                  data={selectAction}
+                  onChange={this.handleActionChange}
+              />
+            </div>
+          </div>
 
-        <div className="form-group">
-        <label className="col-sm-2 control-label">Resources</label>
-        <div className="col-sm-10">
-        <TagsInput
-          value={this.state.Resource}
-          onChange={this.handleResourceChange}
-        />
-        <div className="hint">
-        <ul>
-          <li>Press ENTER after add each resource</li>
-          <li>{'Example: my-bucket/dir/*, acs:oss:*:1234:my-bucket/*'}</li>
-        </ul>
-        </div>
-        </div>
-        </div>
+          <div className="form-group">
+            <label className="col-sm-2 control-label">Resources</label>
+            <div className="col-sm-10">
+              <TagsInput
+                  value={this.state.Resource}
+                  onChange={this.handleResourceChange}
+              />
+              <div className="hint">
+                <ul>
+                  <li>Press ENTER after add each resource</li>
+                  <li>{'Example: my-bucket/dir/*, acs:oss:*:1234:my-bucket/*'}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-        <div className="form-group">
-        <label className="col-sm-2 control-label">Conditions (Optional)</label>
-        <div className="col-sm-10">
-        <button className="btn btn-default dropdown-toggle" onClick={this.showCondEditor}>
-          {this.state.ShowCondEditor ? 'Hide' : 'Show'}
-        </button>
-        <ConditionEditor
-          data={this.state}
-          onConditionSubmit={this.handleConditionSubmit}
-          onConditionRemove={this.handleConditionRemove}
-        />
-        </div>
-        </div>
+          <div className="form-group">
+            <label className="col-sm-2 control-label">Conditions (Optional)</label>
+            <div className="col-sm-10">
+              <button
+                  className="btn btn-default dropdown-toggle"
+                  onClick={this.showCondEditor}>
+                {this.state.ShowCondEditor ? 'Hide' : 'Show'}
+              </button>
+              <ConditionEditor
+                  data={this.state}
+                  onConditionSubmit={this.handleConditionSubmit}
+                  onConditionRemove={this.handleConditionRemove}
+              />
+            </div>
+          </div>
 
-        <div className="notice">
-          {this.state.Notice}
-        </div>
+          <div className="notice">
+            {this.state.Notice}
+          </div>
 
-        <div className="form-group">
-        <div className="col-sm-offset-2 col-sm-10">
-        <input type="submit" className="btn btn-primary" value="Add rule" />
-        </div>
-        </div>
+          <div className="form-group">
+            <div className="col-sm-offset-2 col-sm-10">
+              <input type="submit" className="btn btn-primary" value="Add rule" />
+            </div>
+          </div>
         </form>
-        </div>
+      </div>
     );
   }
 });
@@ -247,10 +257,14 @@ var Rule = React.createClass({
 
     var conds = this.props.conditions;
     var conditions = Object.keys(conds).map(function (k) {
-      return (<div key={conds[k].condKey}>{conds[k].condKey} : {conds[k].condValue}</div>);
+      return (
+        <div key={conds[k].condKey}>
+          {conds[k].condKey} : {conds[k].condValue}
+        </div>
+      );
     });
     return (
-        <tr>
+      <tr>
         <td>{this.props.effect}</td>
         <td>{actions}</td>
         <td>{resources}</td>
@@ -260,7 +274,7 @@ var Rule = React.createClass({
             <span className="glyphicon glyphicon-minus" aria-hidden="true"></span>
           </a>
         </td>
-        </tr>
+      </tr>
     );
   }
 });
@@ -270,7 +284,7 @@ var RuleList = React.createClass({
     var self = this;
     var rules = self.props.data.Statement.map(function(r) {
       return (
-          <Rule
+        <Rule
             key={r.RuleId}
             ruleId={r.RuleId}
             effect={r.Effect}
@@ -278,25 +292,25 @@ var RuleList = React.createClass({
             resources={r.Resource}
             conditions={r.Condition}
             onRuleRemove={self.props.onRuleRemove}
-          />
+        />
       );
     });
     return (
-        <div className="ruleList">
+      <div className="ruleList">
         <h2>Rule list:</h2>
         <table className="table">
           <tbody>
-          <tr>
-            <th>Effect</th>
-            <th>Actions</th>
-            <th>Resources</th>
-            <th>Conditions</th>
-            <th></th>
-          </tr>
-          {rules}
+            <tr>
+              <th>Effect</th>
+              <th>Actions</th>
+              <th>Resources</th>
+              <th>Conditions</th>
+              <th></th>
+            </tr>
+            {rules}
           </tbody>
         </table>
-        </div>
+      </div>
     );
   }
 });
@@ -326,12 +340,12 @@ var PolicyView = React.createClass({
     });
 
     return (
-        <div className="policyView">
+      <div className="policyView">
         <h2>Policy JSON:</h2>
         <textarea className="form-control" rows="20" cols="60"
-          onChange={this.handleChange}
-          value={JSON.stringify(policy, null, 2)} />
-        </div>
+                  onChange={this.handleChange}
+                  value={JSON.stringify(policy, null, 2)} />
+      </div>
     );
   }
 });
@@ -344,7 +358,7 @@ var ConditionRule = React.createClass({
 
   render: function () {
     return (
-        <tr>
+      <tr>
         <td>{this.props.condKey}</td>
         <td>{this.props.condValue}</td>
         <td>
@@ -352,7 +366,7 @@ var ConditionRule = React.createClass({
             <span className="glyphicon glyphicon-minus" aria-hidden="true"></span>
           </a>
         </td>
-        </tr>
+      </tr>
     );
   }
 });
@@ -362,29 +376,29 @@ var ConditionRuleList = React.createClass({
     var self = this;
     var conds = self.props.data.Condition.map(function(r) {
       return (
-          <ConditionRule
+        <ConditionRule
             key={r.condId}
             condId={r.condId}
             condKey={r.condKey}
             condValue={r.condValue}
             onConditionRemove={self.props.onConditionRemove}
-          />
+        />
       );
     });
     return (
-        <div className="condList">
+      <div className="condList">
         <h4>Condition list:</h4>
         <table className="table">
           <tbody>
-          <tr>
-            <th>Key</th>
-            <th>Value</th>
-            <th></th>
-          </tr>
-          {conds}
+            <tr>
+              <th>Key</th>
+              <th>Value</th>
+              <th></th>
+            </tr>
+            {conds}
           </tbody>
         </table>
-        </div>
+      </div>
     );
   }
 });
@@ -423,29 +437,42 @@ var ConditionRuleEditor = React.createClass({
     });
 
     return (
-        <div className="conditionRuleEditor">
+      <div className="conditionRuleEditor">
         <div className="form-group">
-        <label className="col-sm-2 control-label">Key</label>
-        <div className="col-sm-10">
-        <select className="form-control" value={this.state.condKey} onChange={this.handleKeyChange}>
-          {selectKey}
-        </select>
-        </div>
+          <label className="col-sm-2 control-label">Key</label>
+          <div className="col-sm-10">
+            <select
+                className="form-control"
+                value={this.state.condKey}
+                onChange={this.handleKeyChange}>
+              {selectKey}
+            </select>
+          </div>
         </div>
 
         <div className="form-group">
-        <label className="col-sm-2 control-label">Value</label>
-        <div className="col-sm-10">
-        <input type="text" className="form-control" value={this.state.condValue} onChange={this.handleValueChange} />
-        </div>
+          <label className="col-sm-2 control-label">Value</label>
+          <div className="col-sm-10">
+            <input
+                type="text"
+                className="form-control"
+                value={this.state.condValue}
+                onChange={this.handleValueChange}
+            />
+          </div>
         </div>
 
         <div className="form-group">
-        <div className="col-sm-offset-2 col-sm-10">
-        <input type="submit" className="btn btn-info" value="Add condition" onClick={this.handleSubmit} />
+          <div className="col-sm-offset-2 col-sm-10">
+            <input
+                type="submit"
+                className="btn btn-info"
+                value="Add condition"
+                onClick={this.handleSubmit}
+            />
+          </div>
         </div>
-        </div>
-        </div>
+      </div>
     );
   }
 });
@@ -453,11 +480,20 @@ var ConditionRuleEditor = React.createClass({
 var ConditionEditor = React.createClass({
   render: function () {
     return (
-        <div className="conditionEditor" style={{display: this.props.data.ShowCondEditor ? 'block' : 'none'}}>
+      <div
+          className="conditionEditor"
+          style={{display: this.props.data.ShowCondEditor ? 'block' : 'none'}}
+      >
         <h4>Add condition:</h4>
-        <ConditionRuleEditor onConditionSubmit={this.props.onConditionSubmit} />
-        <ConditionRuleList data={this.props.data} onConditionRemove={this.props.onConditionRemove} />
-        </div>
+        <ConditionRuleEditor
+            onConditionSubmit={this.props.onConditionSubmit}
+        />
+
+        <ConditionRuleList
+            data={this.props.data}
+            onConditionRemove={this.props.onConditionRemove}
+        />
+      </div>
     );
   }
 });
@@ -468,7 +504,7 @@ var PolicyEditor = React.createClass({
       data: {
         "Version": "1",
         "Statement": []
-    }};
+      }};
   },
 
   handleRuleSubmit: function (rule) {
@@ -501,25 +537,30 @@ var PolicyEditor = React.createClass({
 
   render: function () {
     return (
-        <div className="policyEditor">
+      <div className="policyEditor">
         <div className="row">
-        <div className="col-md-6">
-        <RuleEditor data={this.state.data} onRuleSubmit={this.handleRuleSubmit} />
-        </div>
+          <div className="col-md-6">
+            <RuleEditor
+                data={this.state.data}
+                onRuleSubmit={this.handleRuleSubmit} />
+          </div>
 
-        <div className="col-md-6">
-        <PolicyView data={this.state.data} />
-        </div>
+          <div className="col-md-6">
+            <PolicyView data={this.state.data} />
+          </div>
         </div>
         <div className="row">
-        <RuleList data={this.state.data} onRuleRemove={this.handleRuleRemove} />
+          <RuleList
+              data={this.state.data}
+              onRuleRemove={this.handleRuleRemove}
+          />
         </div>
-        </div>
+      </div>
     );
   }
 });
 
 ReactDOM.render(
-    <PolicyEditor />,
+  <PolicyEditor />,
   document.getElementById('policy-editor')
 );

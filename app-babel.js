@@ -140,7 +140,10 @@ var RuleEditor = React.createClass({
             { className: 'col-sm-10' },
             React.createElement(
               'select',
-              { className: 'form-control', value: this.state.Effect, onChange: this.handleEffectChange },
+              {
+                className: 'form-control',
+                value: this.state.Effect,
+                onChange: this.handleEffectChange },
               selectEffect
             )
           )
@@ -156,7 +159,12 @@ var RuleEditor = React.createClass({
           React.createElement(
             'div',
             { className: 'col-sm-10' },
-            React.createElement(MultiSelect, { multiple: true, maxHeight: 300, data: selectAction, onChange: this.handleActionChange })
+            React.createElement(MultiSelect, {
+              multiple: true,
+              maxHeight: 300,
+              data: selectAction,
+              onChange: this.handleActionChange
+            })
           )
         ),
         React.createElement(
@@ -207,7 +215,9 @@ var RuleEditor = React.createClass({
             { className: 'col-sm-10' },
             React.createElement(
               'button',
-              { className: 'btn btn-default dropdown-toggle', onClick: this.showCondEditor },
+              {
+                className: 'btn btn-default dropdown-toggle',
+                onClick: this.showCondEditor },
               this.state.ShowCondEditor ? 'Hide' : 'Show'
             ),
             React.createElement(ConditionEditor, {
@@ -549,7 +559,10 @@ var ConditionRuleEditor = React.createClass({
           { className: 'col-sm-10' },
           React.createElement(
             'select',
-            { className: 'form-control', value: this.state.condKey, onChange: this.handleKeyChange },
+            {
+              className: 'form-control',
+              value: this.state.condKey,
+              onChange: this.handleKeyChange },
             selectKey
           )
         )
@@ -565,7 +578,12 @@ var ConditionRuleEditor = React.createClass({
         React.createElement(
           'div',
           { className: 'col-sm-10' },
-          React.createElement('input', { type: 'text', className: 'form-control', value: this.state.condValue, onChange: this.handleValueChange })
+          React.createElement('input', {
+            type: 'text',
+            className: 'form-control',
+            value: this.state.condValue,
+            onChange: this.handleValueChange
+          })
         )
       ),
       React.createElement(
@@ -574,7 +592,12 @@ var ConditionRuleEditor = React.createClass({
         React.createElement(
           'div',
           { className: 'col-sm-offset-2 col-sm-10' },
-          React.createElement('input', { type: 'submit', className: 'btn btn-info', value: 'Add condition', onClick: this.handleSubmit })
+          React.createElement('input', {
+            type: 'submit',
+            className: 'btn btn-info',
+            value: 'Add condition',
+            onClick: this.handleSubmit
+          })
         )
       )
     );
@@ -587,14 +610,22 @@ var ConditionEditor = React.createClass({
   render: function () {
     return React.createElement(
       'div',
-      { className: 'conditionEditor', style: { display: this.props.data.ShowCondEditor ? 'block' : 'none' } },
+      {
+        className: 'conditionEditor',
+        style: { display: this.props.data.ShowCondEditor ? 'block' : 'none' }
+      },
       React.createElement(
         'h4',
         null,
         'Add condition:'
       ),
-      React.createElement(ConditionRuleEditor, { onConditionSubmit: this.props.onConditionSubmit }),
-      React.createElement(ConditionRuleList, { data: this.props.data, onConditionRemove: this.props.onConditionRemove })
+      React.createElement(ConditionRuleEditor, {
+        onConditionSubmit: this.props.onConditionSubmit
+      }),
+      React.createElement(ConditionRuleList, {
+        data: this.props.data,
+        onConditionRemove: this.props.onConditionRemove
+      })
     );
   }
 });
@@ -648,7 +679,9 @@ var PolicyEditor = React.createClass({
         React.createElement(
           'div',
           { className: 'col-md-6' },
-          React.createElement(RuleEditor, { data: this.state.data, onRuleSubmit: this.handleRuleSubmit })
+          React.createElement(RuleEditor, {
+            data: this.state.data,
+            onRuleSubmit: this.handleRuleSubmit })
         ),
         React.createElement(
           'div',
@@ -659,7 +692,10 @@ var PolicyEditor = React.createClass({
       React.createElement(
         'div',
         { className: 'row' },
-        React.createElement(RuleList, { data: this.state.data, onRuleRemove: this.handleRuleRemove })
+        React.createElement(RuleList, {
+          data: this.state.data,
+          onRuleRemove: this.handleRuleRemove
+        })
       )
     );
   }
