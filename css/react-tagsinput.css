@@ -40,7 +40,7 @@
     margin-top: 1px;
     outline: none;
     padding: 5px;
-    width: 80px;
+    width: 180px;
 }
 
 .notice {
@@ -48,4 +48,12 @@
     font-weight: bold;
     margin-top: 5px;
     margin-bottom: 10px;
+}
+
+.hint {
+    color: red;
+}
+
+.hint ul {
+    margin-left: -15px;
 }

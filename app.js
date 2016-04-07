@@ -150,7 +150,7 @@ var RuleEditor = React.createClass({
   render: function () {
     var self = this;
     var selectEffect = EffectList.map(function (x) {
-      return (<option value={x}>{x}</option>);
+      return (<option key={x} value={x}>{x}</option>);
     });
 
     var selectAction = ActionList.map(function (group) {
@@ -188,12 +188,21 @@ var RuleEditor = React.createClass({
         <div className="form-group">
         <label className="col-sm-2 control-label">Resources</label>
         <div className="col-sm-10">
-        <TagsInput value={this.state.Resource} onChange={this.handleResourceChange} />
+        <TagsInput
+          value={this.state.Resource}
+          onChange={this.handleResourceChange}
+        />
+        <div className="hint">
+        <ul>
+          <li>Press ENTER after add each resource</li>
+          <li>{'Example: my-bucket/dir/*, acs:oss:*:1234:my-bucket/*'}</li>
+        </ul>
+        </div>
         </div>
         </div>
 
         <div className="form-group">
-        <label className="col-sm-2 control-label">Conditions</label>
+        <label className="col-sm-2 control-label">Conditions (Optional)</label>
         <div className="col-sm-10">
         <button className="btn btn-default dropdown-toggle" onClick={this.showCondEditor}>
           {this.state.ShowCondEditor ? 'Hide' : 'Show'}
@@ -229,16 +238,16 @@ var Rule = React.createClass({
 
   render: function () {
     var actions = this.props.actions.map(function (x) {
-      return (<div>{x}</div>);
+      return (<div key={x}>{x}</div>);
     });
 
     var resources = this.props.resources.map(function (x) {
-      return (<div>{x}</div>);
+      return (<div key={x}>{x}</div>);
     });
 
     var conds = this.props.conditions;
     var conditions = Object.keys(conds).map(function (k) {
-      return (<div>{conds[k].condKey} : {conds[k].condValue}</div>);
+      return (<div key={conds[k].condKey}>{conds[k].condKey} : {conds[k].condValue}</div>);
     });
     return (
         <tr>
@@ -262,6 +271,7 @@ var RuleList = React.createClass({
     var rules = self.props.data.Statement.map(function(r) {
       return (
           <Rule
+            key={r.RuleId}
             ruleId={r.RuleId}
             effect={r.Effect}
             actions={r.Action}
@@ -292,6 +302,9 @@ var RuleList = React.createClass({
 });
 
 var PolicyView = React.createClass({
+  handleChange: function () {
+  },
+
   render: function () {
     var policy = {};
     policy.Version = this.props.data.Version;
@@ -315,7 +328,9 @@ var PolicyView = React.createClass({
     return (
         <div className="policyView">
         <h2>Policy JSON:</h2>
-        <textarea className="form-control" rows="20" cols="60" value={JSON.stringify(policy, null, 2)} />
+        <textarea className="form-control" rows="20" cols="60"
+          onChange={this.handleChange}
+          value={JSON.stringify(policy, null, 2)} />
         </div>
     );
   }
@@ -348,6 +363,7 @@ var ConditionRuleList = React.createClass({
     var conds = self.props.data.Condition.map(function(r) {
       return (
           <ConditionRule
+            key={r.condId}
             condId={r.condId}
             condKey={r.condKey}
             condValue={r.condValue}
@@ -403,7 +419,7 @@ var ConditionRuleEditor = React.createClass({
 
   render: function () {
     var selectKey = ConditionList.map(function (x) {
-      return (<option value={x}>{x}</option>);
+      return (<option key={x} value={x}>{x}</option>);
     });
 
     return (

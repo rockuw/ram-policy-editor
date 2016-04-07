@@ -9,5 +9,7 @@ body {
 }
 
 .conditionEditor {
-    background-color: antiquewhite;
+    background-color: ivory;
+    border-radius: 2px;
+    padding: 2px;
 }

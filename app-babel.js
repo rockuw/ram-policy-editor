@@ -101,7 +101,7 @@ var RuleEditor = React.createClass({
     var selectEffect = EffectList.map(function (x) {
       return React.createElement(
         'option',
-        { value: x },
+        { key: x, value: x },
         x
       );
     });
@@ -170,7 +170,28 @@ var RuleEditor = React.createClass({
           React.createElement(
             'div',
             { className: 'col-sm-10' },
-            React.createElement(TagsInput, { value: this.state.Resource, onChange: this.handleResourceChange })
+            React.createElement(TagsInput, {
+              value: this.state.Resource,
+              onChange: this.handleResourceChange
+            }),
+            React.createElement(
+              'div',
+              { className: 'hint' },
+              React.createElement(
+                'ul',
+                null,
+                React.createElement(
+                  'li',
+                  null,
+                  'Press ENTER after add each resource'
+                ),
+                React.createElement(
+                  'li',
+                  null,
+                  'Example: my-bucket/dir/*, acs:oss:*:1234:my-bucket/*'
+                )
+              )
+            )
           )
         ),
         React.createElement(
@@ -179,7 +200,7 @@ var RuleEditor = React.createClass({
           React.createElement(
             'label',
             { className: 'col-sm-2 control-label' },
-            'Conditions'
+            'Conditions (Optional)'
           ),
           React.createElement(
             'div',
@@ -227,7 +248,7 @@ var Rule = React.createClass({
     var actions = this.props.actions.map(function (x) {
       return React.createElement(
         'div',
-        null,
+        { key: x },
         x
       );
     });
@@ -235,7 +256,7 @@ var Rule = React.createClass({
     var resources = this.props.resources.map(function (x) {
       return React.createElement(
         'div',
-        null,
+        { key: x },
         x
       );
     });
@@ -244,7 +265,7 @@ var Rule = React.createClass({
     var conditions = Object.keys(conds).map(function (k) {
       return React.createElement(
         'div',
-        null,
+        { key: conds[k].condKey },
         conds[k].condKey,
         ' : ',
         conds[k].condValue
@@ -293,6 +314,7 @@ var RuleList = React.createClass({
     var self = this;
     var rules = self.props.data.Statement.map(function (r) {
       return React.createElement(Rule, {
+        key: r.RuleId,
         ruleId: r.RuleId,
         effect: r.Effect,
         actions: r.Action,
@@ -350,6 +372,8 @@ var RuleList = React.createClass({
 var PolicyView = React.createClass({
   displayName: 'PolicyView',
 
+  handleChange: function () {},
+
   render: function () {
     var policy = {};
     policy.Version = this.props.data.Version;
@@ -378,7 +402,9 @@ var PolicyView = React.createClass({
         null,
         'Policy JSON:'
       ),
-      React.createElement('textarea', { className: 'form-control', rows: '20', cols: '60', value: JSON.stringify(policy, null, 2) })
+      React.createElement('textarea', { className: 'form-control', rows: '20', cols: '60',
+        onChange: this.handleChange,
+        value: JSON.stringify(policy, null, 2) })
     );
   }
 });
@@ -425,6 +451,7 @@ var ConditionRuleList = React.createClass({
     var self = this;
     var conds = self.props.data.Condition.map(function (r) {
       return React.createElement(ConditionRule, {
+        key: r.condId,
         condId: r.condId,
         condKey: r.condKey,
         condValue: r.condValue,
@@ -501,7 +528,7 @@ var ConditionRuleEditor = React.createClass({
     var selectKey = ConditionList.map(function (x) {
       return React.createElement(
         'option',
-        { value: x },
+        { key: x, value: x },
         x
       );
     });
