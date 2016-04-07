@@ -7,7 +7,9 @@
     "babel-preset-react": "^6.5.0",
     "babelify": "^7.2.0",
     "react": "^0.14.8",
-    "react-dom": "^0.14.8"
+    "react-bootstrap-multiselect": "^1.0.2",
+    "react-dom": "^0.14.8",
+    "react-tagsinput": "^3.4.1"
   },
   "devDependencies": {},
   "scripts": {

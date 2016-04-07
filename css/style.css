@@ -1,0 +1,9 @@
+body {
+    text-align: center;
+}
+
+#main {
+    text-align: left;
+    width: 1000px;
+    margin: 0 auto;
+}
