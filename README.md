@@ -10,7 +10,8 @@ Visual RAM Policy Editor
 + add multiple resources
 + support deleting rule
 + nice looking
-- add condition editor
++ add condition editor
++ Rule list entry too long
++ add notice on error
 - auto set parent path as readonly
 - syntax highlighting for json
-- Rule list entry too long

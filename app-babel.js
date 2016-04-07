@@ -18,6 +18,8 @@ var ActionList = [{
   label: 'Bucket',
   children: ['oss:PutBucket', 'oss:DeleteBucket', 'oss:GetBucketLocation', 'oss:ListMultipartUploads', 'oss:PutBucketAcl', 'oss:GetBucketAcl', 'oss:PutBucketReferer', 'oss:GetBucketReferer', 'oss:PutBucketLogging', 'oss:GetBucketLogging', 'oss:DeleteBucketLogging', 'oss:PutBucketWebsite', 'oss:GetBucketWebsite', 'oss:DeleteBucketWebsite', 'oss:PutBucketLifecycle', 'oss:GetBucketLifecycle', 'oss:DeleteBucketLifecycle', 'oss:PutBucketCors', 'oss:GetBucketCors', 'oss:DeleteBucketCors', 'oss:PutBucketReplication', 'oss:GetBucketReplication', 'oss:DeleteBucketReplication', 'oss:GetBucketReplicationLocation', 'oss:GetBucketReplicationProgress'] }];
 
+var ConditionList = ['acs:SourceIp', 'acs:UserAgent', 'acs:CurrentTime', 'acs:SecureTransport', 'oss:Prefix', 'oss:Delimiter'];
+
 var RuleEditor = React.createClass({
   displayName: 'RuleEditor',
 
@@ -25,7 +27,10 @@ var RuleEditor = React.createClass({
     return {
       Effect: 'Allow',
       Action: [],
-      Resource: []
+      Resource: [],
+      Condition: [],
+      ShowCondEditor: false,
+      Notice: ''
     };
   },
   handleEffectChange: function (e) {
@@ -43,16 +48,51 @@ var RuleEditor = React.createClass({
   handleResourceChange: function (e) {
     this.setState({ Resource: e });
   },
+  handleConditionSubmit: function (e) {
+    if (!e.condValue) {
+      console.log('Invalid condition: %j', e);
+      this.setState({ Notice: 'Condition value is empty!' });
+      return false;
+    }
+
+    var conds = this.state.Condition;
+    var cond = {
+      condId: Date.now(),
+      condKey: e.condKey,
+      condValue: e.condValue
+    };
+    conds = conds.concat([cond]);
+    this.setState({ Condition: conds, Notice: '' });
+    return true;
+  },
+  handleConditionRemove: function (id) {
+    var conds = this.state.Condition.filter(function (x) {
+      return x.condId != id;
+    });
+    this.setState({ Condition: conds });
+  },
+  showCondEditor: function (e) {
+    e.preventDefault();
+    if (this.state.ShowCondEditor) {
+      this.setState({ ShowCondEditor: false });
+    } else {
+      this.setState({ ShowCondEditor: true });
+    }
+  },
   handleSubmit: function (e) {
     e.preventDefault();
 
     var r = this.props.onRuleSubmit(this.state);
-    if (r) {
+    if (!r) {
       this.setState({
         Effect: EffectList[0],
         Action: [],
-        Resource: []
+        Resource: [],
+        Condition: [],
+        Notice: ''
       });
+    } else {
+      this.setState({ Notice: r });
     }
   },
 
@@ -100,7 +140,7 @@ var RuleEditor = React.createClass({
             { className: 'col-sm-10' },
             React.createElement(
               'select',
-              { className: 'form-control', defaultValue: EffectList[0], onChange: this.handleEffectChange },
+              { className: 'form-control', value: this.state.Effect, onChange: this.handleEffectChange },
               selectEffect
             )
           )
@@ -137,9 +177,37 @@ var RuleEditor = React.createClass({
           'div',
           { className: 'form-group' },
           React.createElement(
+            'label',
+            { className: 'col-sm-2 control-label' },
+            'Conditions'
+          ),
+          React.createElement(
+            'div',
+            { className: 'col-sm-10' },
+            React.createElement(
+              'button',
+              { className: 'btn btn-default dropdown-toggle', onClick: this.showCondEditor },
+              this.state.ShowCondEditor ? 'Hide' : 'Show'
+            ),
+            React.createElement(ConditionEditor, {
+              data: this.state,
+              onConditionSubmit: this.handleConditionSubmit,
+              onConditionRemove: this.handleConditionRemove
+            })
+          )
+        ),
+        React.createElement(
+          'div',
+          { className: 'notice' },
+          this.state.Notice
+        ),
+        React.createElement(
+          'div',
+          { className: 'form-group' },
+          React.createElement(
             'div',
             { className: 'col-sm-offset-2 col-sm-10' },
-            React.createElement('input', { type: 'submit', className: 'btn btn-default', value: 'Add' })
+            React.createElement('input', { type: 'submit', className: 'btn btn-primary', value: 'Add rule' })
           )
         )
       )
@@ -156,6 +224,32 @@ var Rule = React.createClass({
   },
 
   render: function () {
+    var actions = this.props.actions.map(function (x) {
+      return React.createElement(
+        'div',
+        null,
+        x
+      );
+    });
+
+    var resources = this.props.resources.map(function (x) {
+      return React.createElement(
+        'div',
+        null,
+        x
+      );
+    });
+
+    var conds = this.props.conditions;
+    var conditions = Object.keys(conds).map(function (k) {
+      return React.createElement(
+        'div',
+        null,
+        conds[k].condKey,
+        ' : ',
+        conds[k].condValue
+      );
+    });
     return React.createElement(
       'tr',
       null,
@@ -167,12 +261,17 @@ var Rule = React.createClass({
       React.createElement(
         'td',
         null,
-        this.props.actions
+        actions
       ),
       React.createElement(
         'td',
         null,
-        this.props.resources
+        resources
+      ),
+      React.createElement(
+        'td',
+        null,
+        conditions
       ),
       React.createElement(
         'td',
@@ -196,8 +295,9 @@ var RuleList = React.createClass({
       return React.createElement(Rule, {
         ruleId: r.RuleId,
         effect: r.Effect,
-        actions: r.Action.join(),
-        resources: r.Resource.join(),
+        actions: r.Action,
+        resources: r.Resource,
+        conditions: r.Condition,
         onRuleRemove: self.props.onRuleRemove
       });
     });
@@ -233,6 +333,11 @@ var RuleList = React.createClass({
               null,
               'Resources'
             ),
+            React.createElement(
+              'th',
+              null,
+              'Conditions'
+            ),
             React.createElement('th', null)
           ),
           rules
@@ -246,12 +351,22 @@ var PolicyView = React.createClass({
   displayName: 'PolicyView',
 
   render: function () {
-    var policy = this.props.data;
-    policy.Statement = policy.Statement.map(function (x) {
+    var policy = {};
+    policy.Version = this.props.data.Version;
+    policy.Statement = this.props.data.Statement.map(function (x) {
+      var conds = {};
+      x.Condition.map(function (cond, i) {
+        var name = "cond-" + i;
+        var value = {};
+        value[cond.condKey] = cond.condValue;
+        conds[name] = value;
+      });
+
       return {
         Effect: x.Effect,
         Action: x.Action,
-        Resource: x.Resource
+        Resource: x.Resource,
+        Condition: conds
       };
     });
 
@@ -268,11 +383,201 @@ var PolicyView = React.createClass({
   }
 });
 
+var ConditionRule = React.createClass({
+  displayName: 'ConditionRule',
+
+  handleRemove: function (e) {
+    e.preventDefault();
+    this.props.onConditionRemove(this.props.condId);
+  },
+
+  render: function () {
+    return React.createElement(
+      'tr',
+      null,
+      React.createElement(
+        'td',
+        null,
+        this.props.condKey
+      ),
+      React.createElement(
+        'td',
+        null,
+        this.props.condValue
+      ),
+      React.createElement(
+        'td',
+        null,
+        React.createElement(
+          'a',
+          { href: '#', onClick: this.handleRemove },
+          React.createElement('span', { className: 'glyphicon glyphicon-minus', 'aria-hidden': 'true' })
+        )
+      )
+    );
+  }
+});
+
+var ConditionRuleList = React.createClass({
+  displayName: 'ConditionRuleList',
+
+  render: function () {
+    var self = this;
+    var conds = self.props.data.Condition.map(function (r) {
+      return React.createElement(ConditionRule, {
+        condId: r.condId,
+        condKey: r.condKey,
+        condValue: r.condValue,
+        onConditionRemove: self.props.onConditionRemove
+      });
+    });
+    return React.createElement(
+      'div',
+      { className: 'condList' },
+      React.createElement(
+        'h4',
+        null,
+        'Condition list:'
+      ),
+      React.createElement(
+        'table',
+        { className: 'table' },
+        React.createElement(
+          'tbody',
+          null,
+          React.createElement(
+            'tr',
+            null,
+            React.createElement(
+              'th',
+              null,
+              'Key'
+            ),
+            React.createElement(
+              'th',
+              null,
+              'Value'
+            ),
+            React.createElement('th', null)
+          ),
+          conds
+        )
+      )
+    );
+  }
+});
+
+var ConditionRuleEditor = React.createClass({
+  displayName: 'ConditionRuleEditor',
+
+  getInitialState: function () {
+    return {
+      condKey: ConditionList[0],
+      condValue: ''
+    };
+  },
+
+  handleKeyChange: function (e) {
+    this.setState({ condKey: e.target.value });
+  },
+
+  handleValueChange: function (e) {
+    this.setState({ condValue: e.target.value });
+  },
+
+  handleSubmit: function (e) {
+    e.preventDefault();
+
+    var r = this.props.onConditionSubmit(this.state);
+    if (r) {
+      this.setState({
+        condKey: ConditionList[0],
+        condValue: ''
+      });
+    }
+  },
+
+  render: function () {
+    var selectKey = ConditionList.map(function (x) {
+      return React.createElement(
+        'option',
+        { value: x },
+        x
+      );
+    });
+
+    return React.createElement(
+      'div',
+      { className: 'conditionRuleEditor' },
+      React.createElement(
+        'div',
+        { className: 'form-group' },
+        React.createElement(
+          'label',
+          { className: 'col-sm-2 control-label' },
+          'Key'
+        ),
+        React.createElement(
+          'div',
+          { className: 'col-sm-10' },
+          React.createElement(
+            'select',
+            { className: 'form-control', value: this.state.condKey, onChange: this.handleKeyChange },
+            selectKey
+          )
+        )
+      ),
+      React.createElement(
+        'div',
+        { className: 'form-group' },
+        React.createElement(
+          'label',
+          { className: 'col-sm-2 control-label' },
+          'Value'
+        ),
+        React.createElement(
+          'div',
+          { className: 'col-sm-10' },
+          React.createElement('input', { type: 'text', className: 'form-control', value: this.state.condValue, onChange: this.handleValueChange })
+        )
+      ),
+      React.createElement(
+        'div',
+        { className: 'form-group' },
+        React.createElement(
+          'div',
+          { className: 'col-sm-offset-2 col-sm-10' },
+          React.createElement('input', { type: 'submit', className: 'btn btn-info', value: 'Add condition', onClick: this.handleSubmit })
+        )
+      )
+    );
+  }
+});
+
+var ConditionEditor = React.createClass({
+  displayName: 'ConditionEditor',
+
+  render: function () {
+    return React.createElement(
+      'div',
+      { className: 'conditionEditor', style: { display: this.props.data.ShowCondEditor ? 'block' : 'none' } },
+      React.createElement(
+        'h4',
+        null,
+        'Add condition:'
+      ),
+      React.createElement(ConditionRuleEditor, { onConditionSubmit: this.props.onConditionSubmit }),
+      React.createElement(ConditionRuleList, { data: this.props.data, onConditionRemove: this.props.onConditionRemove })
+    );
+  }
+});
+
 var PolicyEditor = React.createClass({
   displayName: 'PolicyEditor',
 
   getInitialState: function () {
-    return { data: {
+    return {
+      data: {
         "Version": "1",
         "Statement": []
       } };
@@ -281,13 +586,21 @@ var PolicyEditor = React.createClass({
   handleRuleSubmit: function (rule) {
     if (rule.Action.length === 0 || rule.Resource.length === 0) {
       console.error('Invalid rule to add: %j', rule);
-      return false;
+      return 'Action or Resource is empty!';
     }
     var newPolicy = this.state.data;
     rule.RuleId = Date.now();
+    rule.Resource = rule.Resource.map(function (r) {
+      if (r.startsWith('acs:')) {
+        return r;
+      } else {
+        return 'acs:oss:*:*:' + r;
+      }
+    });
+
     newPolicy.Statement = newPolicy.Statement.concat([rule]);
     this.setState({ data: newPolicy });
-    return true;
+    return null;
   },
 
   handleRuleRemove: function (id) {
@@ -308,14 +621,18 @@ var PolicyEditor = React.createClass({
         React.createElement(
           'div',
           { className: 'col-md-6' },
-          React.createElement(RuleEditor, { data: this.state.data, onRuleSubmit: this.handleRuleSubmit }),
-          React.createElement(RuleList, { data: this.state.data, onRuleRemove: this.handleRuleRemove })
+          React.createElement(RuleEditor, { data: this.state.data, onRuleSubmit: this.handleRuleSubmit })
         ),
         React.createElement(
           'div',
           { className: 'col-md-6' },
           React.createElement(PolicyView, { data: this.state.data })
         )
+      ),
+      React.createElement(
+        'div',
+        { className: 'row' },
+        React.createElement(RuleList, { data: this.state.data, onRuleRemove: this.handleRuleRemove })
       )
     );
   }

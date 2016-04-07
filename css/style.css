@@ -7,3 +7,7 @@ body {
     width: 1000px;
     margin: 0 auto;
 }
+
+.conditionEditor {
+    background-color: antiquewhite;
+}
