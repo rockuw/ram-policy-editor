@@ -102,7 +102,7 @@ var RuleEditor = React.createClass({
   handleConditionSubmit: function (e) {
     if (!e.condValue) {
       console.log('Invalid condition: %j', e);
-      this.setState({Notice: 'Condition value is empty!'});
+      this.setState({Notice: 'ERROR: Condition value is empty!'});
       return false;
     }
 
@@ -143,7 +143,7 @@ var RuleEditor = React.createClass({
         Notice: ''
       });
     } else {
-      this.setState({Notice: r});
+      this.setState({Notice: 'ERROR: ' + r});
     }
   },
 

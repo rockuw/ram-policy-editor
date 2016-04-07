@@ -13,3 +13,8 @@ body {
     border-radius: 2px;
     padding: 2px;
 }
+
+.gh-star {
+    float: right;
+    margin-top: -30px;
+}
