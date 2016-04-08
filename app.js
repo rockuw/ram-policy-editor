@@ -197,7 +197,7 @@ var RuleEditor = React.createClass({
 
     return (
       <div className="ruleEditor">
-        <h2>Add rule:</h2>
+        <h2>添加规则</h2>
         <form className="form-horizontal" onSubmit={this.handleSubmit}>
           <div className="form-group">
             <label className="col-sm-2 control-label">Effect</label>
@@ -232,8 +232,8 @@ var RuleEditor = React.createClass({
               />
               <div className="hint">
                 <ul>
-                  <li>Press ENTER after add each resource</li>
-                  <li>{'Example: my-bucket, my-bucket/dir/*'}</li>
+                  <li>每添加一个Resource后<b>按回车</b>确认</li>
+                  <li>{'例子: my-bucket, my-bucket/dir/*'}</li>
                   <li>
                     <a href="https://github.com/rockuw/ram-policy-editor/#resources">
                       More...
@@ -252,7 +252,7 @@ var RuleEditor = React.createClass({
                   <input type="checkbox"
                          checked={this.state.EnablePath}
                          onChange={this.handleEnablePathChange} />
-                  Allow parent path access
+                  自动设置父目录权限
                 </label>
               </div>
             </div>
@@ -264,7 +264,7 @@ var RuleEditor = React.createClass({
               <button
                   className="btn btn-default dropdown-toggle"
                   onClick={this.showCondEditor}>
-                {this.state.ShowCondEditor ? 'Hide' : 'Show'}
+                {this.state.ShowCondEditor ? '隐藏' : '显示'}
               </button>
               <ConditionEditor
                   data={this.state}
@@ -280,7 +280,7 @@ var RuleEditor = React.createClass({
 
           <div className="form-group">
             <div className="col-sm-offset-2 col-sm-10">
-              <input type="submit" className="btn btn-primary" value="Add rule" />
+              <input type="submit" className="btn btn-primary" value="添加规则" />
             </div>
           </div>
         </form>
@@ -347,7 +347,7 @@ var RuleList = React.createClass({
     });
     return (
       <div className="ruleList">
-        <h2>Rule list:</h2>
+        <h2>规则列表</h2>
         <table className="table">
           <tbody>
             <tr>
@@ -390,7 +390,7 @@ var PolicyView = React.createClass({
 
     return (
       <div className="policyView">
-        <h2>Policy JSON:</h2>
+        <h2>授权策略</h2>
         <textarea className="form-control" rows="20" cols="60"
                   onChange={this.handleChange}
                   value={JSON.stringify(policy, null, 2)} />
@@ -438,7 +438,7 @@ var ConditionRuleList = React.createClass({
     });
     return (
       <div className="condList">
-        <h4>Condition list:</h4>
+        <h4>条件列表</h4>
         <table className="table">
           <tbody>
             <tr>
@@ -541,7 +541,7 @@ var ConditionRuleEditor = React.createClass({
             <input
                 type="submit"
                 className="btn btn-info"
-                value="Add condition"
+                value="添加条件"
                 onClick={this.handleSubmit}
             />
           </div>
@@ -558,7 +558,7 @@ var ConditionEditor = React.createClass({
           className="conditionEditor"
           style={{display: this.props.data.ShowCondEditor ? 'block' : 'none'}}
       >
-        <h4>Add condition:</h4>
+        <h4>添加条件</h4>
         <ConditionRuleEditor
             onConditionSubmit={this.props.onConditionSubmit}
         />

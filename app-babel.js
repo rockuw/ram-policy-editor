@@ -130,7 +130,7 @@ var RuleEditor = React.createClass({
       React.createElement(
         'h2',
         null,
-        'Add rule:'
+        '添加规则'
       ),
       React.createElement(
         'form',
@@ -199,12 +199,18 @@ var RuleEditor = React.createClass({
                 React.createElement(
                   'li',
                   null,
-                  'Press ENTER after add each resource'
+                  '每添加一个Resource后',
+                  React.createElement(
+                    'b',
+                    null,
+                    '按回车'
+                  ),
+                  '确认'
                 ),
                 React.createElement(
                   'li',
                   null,
-                  'Example: my-bucket, my-bucket/dir/*'
+                  '例子: my-bucket, my-bucket/dir/*'
                 ),
                 React.createElement(
                   'li',
@@ -239,7 +245,7 @@ var RuleEditor = React.createClass({
                 React.createElement('input', { type: 'checkbox',
                   checked: this.state.EnablePath,
                   onChange: this.handleEnablePathChange }),
-                'Allow parent path access'
+                '自动设置父目录权限'
               )
             )
           )
@@ -260,7 +266,7 @@ var RuleEditor = React.createClass({
               {
                 className: 'btn btn-default dropdown-toggle',
                 onClick: this.showCondEditor },
-              this.state.ShowCondEditor ? 'Hide' : 'Show'
+              this.state.ShowCondEditor ? '隐藏' : '显示'
             ),
             React.createElement(ConditionEditor, {
               data: this.state,
@@ -280,7 +286,7 @@ var RuleEditor = React.createClass({
           React.createElement(
             'div',
             { className: 'col-sm-offset-2 col-sm-10' },
-            React.createElement('input', { type: 'submit', className: 'btn btn-primary', value: 'Add rule' })
+            React.createElement('input', { type: 'submit', className: 'btn btn-primary', value: '添加规则' })
           )
         )
       )
@@ -384,7 +390,7 @@ var RuleList = React.createClass({
       React.createElement(
         'h2',
         null,
-        'Rule list:'
+        '规则列表'
       ),
       React.createElement(
         'table',
@@ -454,7 +460,7 @@ var PolicyView = React.createClass({
       React.createElement(
         'h2',
         null,
-        'Policy JSON:'
+        '授权策略'
       ),
       React.createElement('textarea', { className: 'form-control', rows: '20', cols: '60',
         onChange: this.handleChange,
@@ -524,7 +530,7 @@ var ConditionRuleList = React.createClass({
       React.createElement(
         'h4',
         null,
-        'Condition list:'
+        '条件列表'
       ),
       React.createElement(
         'table',
@@ -685,7 +691,7 @@ var ConditionRuleEditor = React.createClass({
           React.createElement('input', {
             type: 'submit',
             className: 'btn btn-info',
-            value: 'Add condition',
+            value: '添加条件',
             onClick: this.handleSubmit
           })
         )
@@ -707,7 +713,7 @@ var ConditionEditor = React.createClass({
       React.createElement(
         'h4',
         null,
-        'Add condition:'
+        '添加条件'
       ),
       React.createElement(ConditionRuleEditor, {
         onConditionSubmit: this.props.onConditionSubmit
