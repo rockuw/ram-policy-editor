@@ -20,6 +20,8 @@ var ActionList = [{
 
 var ConditionList = ['acs:SourceIp', 'acs:UserAgent', 'acs:CurrentTime', 'acs:SecureTransport', 'oss:Prefix', 'oss:Delimiter'];
 
+var ConditionOpList = ['StringEquals', 'StringNotEquals', 'StringEqualsIgnoreCase', 'StringNotEqualsIgnoreCase', 'StringLike', 'StringNotLike', 'NumericEquals', 'NumericEquals', 'NumericLessThan', 'NumericLessThanEquals', 'NumericGreaterThan', 'NumericGreaterThanEquals', 'DateEquals', 'DateNotEquals', 'DateLessThan', 'DateLessThanEquals', 'DateGreaterThan', 'DateGreaterThanEquals', 'Bool', 'IpAddress', 'NotIpAddress'];
+
 var RuleEditor = React.createClass({
   displayName: 'RuleEditor',
 
@@ -58,6 +60,7 @@ var RuleEditor = React.createClass({
     var conds = this.state.Condition;
     var cond = {
       condId: Date.now(),
+      condOp: e.condOp,
       condKey: e.condKey,
       condValue: e.condValue
     };
@@ -276,9 +279,12 @@ var Rule = React.createClass({
       return React.createElement(
         'div',
         { key: conds[k].condKey },
+        conds[k].condOp,
+        ' (',
         conds[k].condKey,
         ' : ',
-        conds[k].condValue
+        conds[k].condValue,
+        ')'
       );
     });
     return React.createElement(
@@ -389,11 +395,10 @@ var PolicyView = React.createClass({
     policy.Version = this.props.data.Version;
     policy.Statement = this.props.data.Statement.map(function (x) {
       var conds = {};
-      x.Condition.map(function (cond, i) {
-        var name = "cond-" + i;
+      x.Condition.map(function (cond) {
         var value = {};
         value[cond.condKey] = cond.condValue;
-        conds[name] = value;
+        conds[cond.condOp] = value;
       });
 
       return {
@@ -434,6 +439,11 @@ var ConditionRule = React.createClass({
       React.createElement(
         'td',
         null,
+        this.props.condOp
+      ),
+      React.createElement(
+        'td',
+        null,
         this.props.condKey
       ),
       React.createElement(
@@ -463,6 +473,7 @@ var ConditionRuleList = React.createClass({
       return React.createElement(ConditionRule, {
         key: r.condId,
         condId: r.condId,
+        condOp: r.condOp,
         condKey: r.condKey,
         condValue: r.condValue,
         onConditionRemove: self.props.onConditionRemove
@@ -488,6 +499,11 @@ var ConditionRuleList = React.createClass({
             React.createElement(
               'th',
               null,
+              'Operation'
+            ),
+            React.createElement(
+              'th',
+              null,
               'Key'
             ),
             React.createElement(
@@ -509,9 +525,14 @@ var ConditionRuleEditor = React.createClass({
 
   getInitialState: function () {
     return {
+      condOp: ConditionOpList[0],
       condKey: ConditionList[0],
       condValue: ''
     };
+  },
+
+  handleOpChange: function (e) {
+    this.setState({ condOp: e.target.value });
   },
 
   handleKeyChange: function (e) {
@@ -528,6 +549,7 @@ var ConditionRuleEditor = React.createClass({
     var r = this.props.onConditionSubmit(this.state);
     if (r) {
       this.setState({
+        condOp: ConditionOpList[0],
         condKey: ConditionList[0],
         condValue: ''
       });
@@ -535,6 +557,14 @@ var ConditionRuleEditor = React.createClass({
   },
 
   render: function () {
+    var selectOp = ConditionOpList.map(function (x) {
+      return React.createElement(
+        'option',
+        { key: x, value: x },
+        x
+      );
+    });
+
     var selectKey = ConditionList.map(function (x) {
       return React.createElement(
         'option',
@@ -546,6 +576,27 @@ var ConditionRuleEditor = React.createClass({
     return React.createElement(
       'div',
       { className: 'conditionRuleEditor' },
+      React.createElement(
+        'div',
+        { className: 'form-group' },
+        React.createElement(
+          'label',
+          { className: 'col-sm-2 control-label' },
+          'Operation'
+        ),
+        React.createElement(
+          'div',
+          { className: 'col-sm-10' },
+          React.createElement(
+            'select',
+            {
+              className: 'form-control',
+              value: this.state.condOp,
+              onChange: this.handleOpChange },
+            selectOp
+          )
+        )
+      ),
       React.createElement(
         'div',
         { className: 'form-group' },

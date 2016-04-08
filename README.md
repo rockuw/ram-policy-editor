@@ -13,5 +13,8 @@ Visual RAM Policy Editor
 + add condition editor
 + Rule list entry too long
 + add notice on error
++ add condition op list
 - auto set parent path as readonly
+- condition multiple values
+- load template
 - syntax highlighting for json

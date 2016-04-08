@@ -73,6 +73,30 @@ var ConditionList = [
   'oss:Delimiter'
 ];
 
+var ConditionOpList = [
+  'StringEquals',
+  'StringNotEquals',
+  'StringEqualsIgnoreCase',
+  'StringNotEqualsIgnoreCase',
+  'StringLike',
+  'StringNotLike',
+  'NumericEquals',
+  'NumericEquals',
+  'NumericLessThan',
+  'NumericLessThanEquals',
+  'NumericGreaterThan',
+  'NumericGreaterThanEquals',
+  'DateEquals',
+  'DateNotEquals',
+  'DateLessThan',
+  'DateLessThanEquals',
+  'DateGreaterThan',
+  'DateGreaterThanEquals',
+  'Bool',
+  'IpAddress',
+  'NotIpAddress'
+];
+
 var RuleEditor = React.createClass({
   getInitialState: function () {
     return {
@@ -109,6 +133,7 @@ var RuleEditor = React.createClass({
     var conds = this.state.Condition;
     var cond = {
       condId: Date.now(),
+      condOp: e.condOp,
       condKey: e.condKey,
       condValue: e.condValue
     };
@@ -259,7 +284,7 @@ var Rule = React.createClass({
     var conditions = Object.keys(conds).map(function (k) {
       return (
         <div key={conds[k].condKey}>
-          {conds[k].condKey} : {conds[k].condValue}
+          {conds[k].condOp} ({conds[k].condKey} : {conds[k].condValue})
         </div>
       );
     });
@@ -324,11 +349,10 @@ var PolicyView = React.createClass({
     policy.Version = this.props.data.Version;
     policy.Statement = this.props.data.Statement.map(function (x) {
       var conds = {};
-      x.Condition.map(function (cond, i) {
-        var name = "cond-" + i;
+      x.Condition.map(function (cond) {
         var value = {};
         value[cond.condKey] = cond.condValue;
-        conds[name] = value;
+        conds[cond.condOp] = value;
       });
 
       return ({
@@ -359,6 +383,7 @@ var ConditionRule = React.createClass({
   render: function () {
     return (
       <tr>
+        <td>{this.props.condOp}</td>
         <td>{this.props.condKey}</td>
         <td>{this.props.condValue}</td>
         <td>
@@ -379,6 +404,7 @@ var ConditionRuleList = React.createClass({
         <ConditionRule
             key={r.condId}
             condId={r.condId}
+            condOp={r.condOp}
             condKey={r.condKey}
             condValue={r.condValue}
             onConditionRemove={self.props.onConditionRemove}
@@ -391,6 +417,7 @@ var ConditionRuleList = React.createClass({
         <table className="table">
           <tbody>
             <tr>
+              <th>Operation</th>
               <th>Key</th>
               <th>Value</th>
               <th></th>
@@ -406,9 +433,14 @@ var ConditionRuleList = React.createClass({
 var ConditionRuleEditor = React.createClass({
   getInitialState: function() {
     return {
+      condOp: ConditionOpList[0],
       condKey: ConditionList[0],
       condValue: ''
     };
+  },
+
+  handleOpChange: function (e) {
+    this.setState({condOp: e.target.value});
   },
 
   handleKeyChange: function (e) {
@@ -425,6 +457,7 @@ var ConditionRuleEditor = React.createClass({
     var r = this.props.onConditionSubmit(this.state);
     if (r) {
       this.setState({
+        condOp: ConditionOpList[0],
         condKey: ConditionList[0],
         condValue: ''
       });
@@ -432,12 +465,28 @@ var ConditionRuleEditor = React.createClass({
   },
 
   render: function () {
+    var selectOp = ConditionOpList.map(function (x) {
+      return (<option key={x} value={x}>{x}</option>);
+    });
+
     var selectKey = ConditionList.map(function (x) {
       return (<option key={x} value={x}>{x}</option>);
     });
 
     return (
       <div className="conditionRuleEditor">
+        <div className="form-group">
+          <label className="col-sm-2 control-label">Operation</label>
+          <div className="col-sm-10">
+            <select
+                className="form-control"
+                value={this.state.condOp}
+                onChange={this.handleOpChange}>
+              {selectOp}
+            </select>
+          </div>
+        </div>
+
         <div className="form-group">
           <label className="col-sm-2 control-label">Key</label>
           <div className="col-sm-10">
