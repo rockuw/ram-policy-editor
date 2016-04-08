@@ -211,7 +211,7 @@ var RuleEditor = React.createClass({
                   null,
                   React.createElement(
                     'a',
-                    { href: 'https://github.com/rockuw/ram-policy-editor' },
+                    { href: 'https://github.com/rockuw/ram-policy-editor/#resources' },
                     'More...'
                   )
                 )

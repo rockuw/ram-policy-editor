@@ -234,7 +234,11 @@ var RuleEditor = React.createClass({
                 <ul>
                   <li>Press ENTER after add each resource</li>
                   <li>{'Example: my-bucket, my-bucket/dir/*'}</li>
-                  <li><a href="https://github.com/rockuw/ram-policy-editor">More...</a></li>
+                  <li>
+                    <a href="https://github.com/rockuw/ram-policy-editor/#resources">
+                      More...
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>

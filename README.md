@@ -15,6 +15,8 @@ Resources有如下几种格式：
    有权限）
 4. 表示某个bucket下某个目录下面所有文件: `my-bucket/dir/*` （此时对dir
    没有权限，例如ListObjects）
+5. 填写完整的资源路径：`acs:oss:*:1234:my-bucket/dir`，其中`1234`为用
+   户的User ID（在控制台查看）
 
 ### EnablePath
 
