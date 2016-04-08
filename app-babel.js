@@ -20,7 +20,7 @@ var ActionList = [{
 
 var ConditionList = ['acs:SourceIp', 'acs:UserAgent', 'acs:CurrentTime', 'acs:SecureTransport', 'oss:Prefix', 'oss:Delimiter'];
 
-var ConditionOpList = ['StringEquals', 'StringNotEquals', 'StringEqualsIgnoreCase', 'StringNotEqualsIgnoreCase', 'StringLike', 'StringNotLike', 'NumericEquals', 'NumericEquals', 'NumericLessThan', 'NumericLessThanEquals', 'NumericGreaterThan', 'NumericGreaterThanEquals', 'DateEquals', 'DateNotEquals', 'DateLessThan', 'DateLessThanEquals', 'DateGreaterThan', 'DateGreaterThanEquals', 'Bool', 'IpAddress', 'NotIpAddress'];
+var ConditionOpList = ['StringEquals', 'StringNotEquals', 'StringEqualsIgnoreCase', 'StringNotEqualsIgnoreCase', 'StringLike', 'StringNotLike', 'NumericEquals', 'NumericNotEquals', 'NumericLessThan', 'NumericLessThanEquals', 'NumericGreaterThan', 'NumericGreaterThanEquals', 'DateEquals', 'DateNotEquals', 'DateLessThan', 'DateLessThanEquals', 'DateGreaterThan', 'DateGreaterThanEquals', 'Bool', 'IpAddress', 'NotIpAddress'];
 
 var RuleEditor = React.createClass({
   displayName: 'RuleEditor',
@@ -31,6 +31,7 @@ var RuleEditor = React.createClass({
       Action: [],
       Resource: [],
       Condition: [],
+      EnablePath: false,
       ShowCondEditor: false,
       Notice: ''
     };
@@ -50,16 +51,19 @@ var RuleEditor = React.createClass({
   handleResourceChange: function (e) {
     this.setState({ Resource: e });
   },
+  handleEnablePathChange: function (e) {
+    this.setState({ EnablePath: e.target.checked });
+  },
   handleConditionSubmit: function (e) {
     if (!e.condValue) {
-      console.log('Invalid condition: %j', e);
+      console.error('Invalid condition: %j', e);
       this.setState({ Notice: 'ERROR: Condition value is empty!' });
       return false;
     }
 
     var conds = this.state.Condition;
     var cond = {
-      condId: Date.now(),
+      condId: Math.random(),
       condOp: e.condOp,
       condKey: e.condKey,
       condValue: e.condValue
@@ -92,7 +96,8 @@ var RuleEditor = React.createClass({
         Action: [],
         Resource: [],
         Condition: [],
-        Notice: ''
+        Notice: '',
+        EnablePath: false
       });
     } else {
       this.setState({ Notice: 'ERROR: ' + r });
@@ -199,8 +204,42 @@ var RuleEditor = React.createClass({
                 React.createElement(
                   'li',
                   null,
-                  'Example: my-bucket/dir/*, acs:oss:*:1234:my-bucket/*'
+                  'Example: my-bucket, my-bucket/dir/*'
+                ),
+                React.createElement(
+                  'li',
+                  null,
+                  React.createElement(
+                    'a',
+                    { href: 'https://github.com/rockuw/ram-policy-editor' },
+                    'More...'
+                  )
                 )
+              )
+            )
+          )
+        ),
+        React.createElement(
+          'div',
+          { className: 'form-group' },
+          React.createElement(
+            'label',
+            { className: 'col-sm-2 control-label' },
+            'EnablePath'
+          ),
+          React.createElement(
+            'div',
+            { className: 'col-sm-10' },
+            React.createElement(
+              'div',
+              { className: 'checkbox' },
+              React.createElement(
+                'label',
+                null,
+                React.createElement('input', { type: 'checkbox',
+                  checked: this.state.EnablePath,
+                  onChange: this.handleEnablePathChange }),
+                'Allow parent path access'
               )
             )
           )
@@ -280,10 +319,10 @@ var Rule = React.createClass({
         'div',
         { key: conds[k].condKey },
         conds[k].condOp,
-        ' (',
+        '(',
         conds[k].condKey,
         ' : ',
-        conds[k].condValue,
+        JSON.stringify(conds[k].condValue),
         ')'
       );
     });
@@ -396,7 +435,7 @@ var PolicyView = React.createClass({
     policy.Statement = this.props.data.Statement.map(function (x) {
       var conds = {};
       x.Condition.map(function (cond) {
-        var value = {};
+        var value = conds[cond.condOp] || {};
         value[cond.condKey] = cond.condValue;
         conds[cond.condOp] = value;
       });
@@ -692,13 +731,62 @@ var PolicyEditor = React.createClass({
       } };
   },
 
+  enableParentPath: function (resources) {
+    var bucketPrefixes = {};
+    resources.map(function (r) {
+      var pieces = r.split(':');
+      var path = pieces[pieces.length - 1];
+      pieces = path.split('/');
+      if (pieces.length < 2) {
+        return;
+      }
+
+      var bucket = pieces[0];
+      var prefixes = bucketPrefixes[bucket] || new Set();
+      bucketPrefixes[bucket] = prefixes;
+      var p = '';
+      pieces.slice(1).map(function (dir) {
+        prefixes.add(p);
+        p += dir;
+      });
+    });
+
+    var buckets = Object.keys(bucketPrefixes);
+    if (buckets.length === 0) {
+      return;
+    }
+
+    var newPolicy = this.state.data;
+    buckets.map(function (bucket) {
+      var prefixes = bucketPrefixes[bucket];
+      var rule = {
+        RuleId: Math.random(),
+        Effect: 'Allow',
+        Action: ['oss:ListObjects'],
+        Resource: ['acs:oss:*:*:' + bucket],
+        Condition: [{
+          condOp: 'StringEquals',
+          condKey: 'oss:Prefix',
+          condValue: Array.from(prefixes)
+        }, {
+          condOp: 'StringEquals',
+          condKey: 'oss:Delimiter',
+          condValue: '/'
+        }]
+      };
+
+      newPolicy.Statement = newPolicy.Statement.concat([rule]);
+    });
+    this.setState({ data: newPolicy });
+  },
+
   handleRuleSubmit: function (rule) {
     if (rule.Action.length === 0 || rule.Resource.length === 0) {
       console.error('Invalid rule to add: %j', rule);
       return 'Action or Resource is empty!';
     }
     var newPolicy = this.state.data;
-    rule.RuleId = Date.now();
+    rule.RuleId = Math.random();
     rule.Resource = rule.Resource.map(function (r) {
       if (r.startsWith('acs:')) {
         return r;
@@ -709,6 +797,11 @@ var PolicyEditor = React.createClass({
 
     newPolicy.Statement = newPolicy.Statement.concat([rule]);
     this.setState({ data: newPolicy });
+
+    if (rule.EnablePath) {
+      this.enableParentPath(rule.Resource);
+    }
+
     return null;
   },
 

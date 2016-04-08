@@ -81,7 +81,7 @@ var ConditionOpList = [
   'StringLike',
   'StringNotLike',
   'NumericEquals',
-  'NumericEquals',
+  'NumericNotEquals',
   'NumericLessThan',
   'NumericLessThanEquals',
   'NumericGreaterThan',
@@ -104,6 +104,7 @@ var RuleEditor = React.createClass({
       Action: [],
       Resource: [],
       Condition: [],
+      EnablePath: false,
       ShowCondEditor: false,
       Notice: ''
     };
@@ -123,16 +124,19 @@ var RuleEditor = React.createClass({
   handleResourceChange: function (e) {
     this.setState({Resource: e});
   },
+  handleEnablePathChange: function (e) {
+    this.setState({EnablePath: e.target.checked});
+  },
   handleConditionSubmit: function (e) {
     if (!e.condValue) {
-      console.log('Invalid condition: %j', e);
+      console.error('Invalid condition: %j', e);
       this.setState({Notice: 'ERROR: Condition value is empty!'});
       return false;
     }
 
     var conds = this.state.Condition;
     var cond = {
-      condId: Date.now(),
+      condId: Math.random(),
       condOp: e.condOp,
       condKey: e.condKey,
       condValue: e.condValue
@@ -165,7 +169,8 @@ var RuleEditor = React.createClass({
         Action: [],
         Resource: [],
         Condition: [],
-        Notice: ''
+        Notice: '',
+        EnablePath: false
       });
     } else {
       this.setState({Notice: 'ERROR: ' + r});
@@ -228,8 +233,23 @@ var RuleEditor = React.createClass({
               <div className="hint">
                 <ul>
                   <li>Press ENTER after add each resource</li>
-                  <li>{'Example: my-bucket/dir/*, acs:oss:*:1234:my-bucket/*'}</li>
+                  <li>{'Example: my-bucket, my-bucket/dir/*'}</li>
+                  <li><a href="https://github.com/rockuw/ram-policy-editor">More...</a></li>
                 </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="col-sm-2 control-label">EnablePath</label>
+            <div className="col-sm-10">
+              <div className="checkbox">
+                <label>
+                  <input type="checkbox"
+                         checked={this.state.EnablePath}
+                         onChange={this.handleEnablePathChange} />
+                  Allow parent path access
+                </label>
               </div>
             </div>
           </div>
@@ -284,7 +304,8 @@ var Rule = React.createClass({
     var conditions = Object.keys(conds).map(function (k) {
       return (
         <div key={conds[k].condKey}>
-          {conds[k].condOp} ({conds[k].condKey} : {conds[k].condValue})
+          {conds[k].condOp}
+          ({conds[k].condKey} : {JSON.stringify(conds[k].condValue)})
         </div>
       );
     });
@@ -350,7 +371,7 @@ var PolicyView = React.createClass({
     policy.Statement = this.props.data.Statement.map(function (x) {
       var conds = {};
       x.Condition.map(function (cond) {
-        var value = {};
+        var value = conds[cond.condOp] || {};
         value[cond.condKey] = cond.condValue;
         conds[cond.condOp] = value;
       });
@@ -556,13 +577,65 @@ var PolicyEditor = React.createClass({
       }};
   },
 
+  enableParentPath: function (resources) {
+    var bucketPrefixes = {};
+    resources.map(function (r) {
+      var pieces = r.split(':');
+      var path = pieces[pieces.length - 1];
+      pieces = path.split('/');
+      if (pieces.length < 2) {
+        return;
+      }
+
+      var bucket = pieces[0];
+      var prefixes = bucketPrefixes[bucket] || new Set;
+      bucketPrefixes[bucket] = prefixes;
+      var p = '';
+      pieces.slice(1).map(function (dir) {
+        prefixes.add(p);
+        p += dir;
+      });
+    });
+
+    var buckets = Object.keys(bucketPrefixes);
+    if (buckets.length === 0) {
+      return;
+    }
+
+    var newPolicy = this.state.data;
+    buckets.map(function (bucket) {
+      var prefixes = bucketPrefixes[bucket];
+      var rule = {
+        RuleId: Math.random(),
+        Effect: 'Allow',
+        Action: ['oss:ListObjects'],
+        Resource: ['acs:oss:*:*:' + bucket],
+        Condition: [
+          {
+            condOp: 'StringEquals',
+            condKey: 'oss:Prefix',
+            condValue: Array.from(prefixes)
+          },
+          {
+            condOp: 'StringEquals',
+            condKey: 'oss:Delimiter',
+            condValue: '/'
+          }
+        ]
+      };
+
+      newPolicy.Statement = newPolicy.Statement.concat([rule]);
+    });
+    this.setState({data: newPolicy});
+  },
+
   handleRuleSubmit: function (rule) {
     if (rule.Action.length === 0 || rule.Resource.length === 0) {
       console.error('Invalid rule to add: %j', rule);
       return 'Action or Resource is empty!';
     }
     var newPolicy = this.state.data;
-    rule.RuleId = Date.now();
+    rule.RuleId = Math.random();
     rule.Resource = rule.Resource.map(function (r) {
       if (r.startsWith('acs:')) {
         return  r;
@@ -573,6 +646,11 @@ var PolicyEditor = React.createClass({
 
     newPolicy.Statement = newPolicy.Statement.concat([rule]);
     this.setState({data: newPolicy});
+
+    if (rule.EnablePath) {
+      this.enableParentPath(rule.Resource);
+    }
+
     return null;
   },
 
