@@ -597,7 +597,7 @@ var PolicyEditor = React.createClass({
       var p = '';
       pieces.slice(1).map(function (dir) {
         prefixes.add(p);
-        p += dir;
+        p += (p ? '/' + dir : dir);
       });
     });
 
