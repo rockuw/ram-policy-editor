@@ -228,6 +228,7 @@ var RuleEditor = React.createClass({
             <div className="col-sm-10">
               <TagsInput
                   value={this.state.Resource}
+                  addOnBlur
                   onChange={this.handleResourceChange}
               />
               <div className="hint">

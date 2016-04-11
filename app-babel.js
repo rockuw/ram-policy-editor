@@ -188,6 +188,7 @@ var RuleEditor = React.createClass({
             { className: 'col-sm-10' },
             React.createElement(TagsInput, {
               value: this.state.Resource,
+              addOnBlur: true,
               onChange: this.handleResourceChange
             }),
             React.createElement(
