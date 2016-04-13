@@ -254,6 +254,9 @@ var RuleEditor = React.createClass({
                          checked={this.state.EnablePath}
                          onChange={this.handleEnablePathChange} />
                   自动设置父目录权限
+                  <a href="https://github.com/rockuw/ram-policy-editor#enablepath">
+                    <b> ? </b>
+                  </a>
                 </label>
               </div>
             </div>
@@ -409,8 +412,8 @@ var ConditionRule = React.createClass({
   render: function () {
     return (
       <tr>
-        <td>{this.props.condOp}</td>
         <td>{this.props.condKey}</td>
+        <td>{this.props.condOp}</td>
         <td>{this.props.condValue}</td>
         <td>
           <a href="#" onClick={this.handleRemove}>
@@ -443,8 +446,8 @@ var ConditionRuleList = React.createClass({
         <table className="table">
           <tbody>
             <tr>
-              <th>Operation</th>
               <th>Key</th>
+              <th>Operator</th>
               <th>Value</th>
               <th></th>
             </tr>
@@ -502,18 +505,6 @@ var ConditionRuleEditor = React.createClass({
     return (
       <div className="conditionRuleEditor">
         <div className="form-group">
-          <label className="col-sm-2 control-label">Operation</label>
-          <div className="col-sm-10">
-            <select
-                className="form-control"
-                value={this.state.condOp}
-                onChange={this.handleOpChange}>
-              {selectOp}
-            </select>
-          </div>
-        </div>
-
-        <div className="form-group">
           <label className="col-sm-2 control-label">Key</label>
           <div className="col-sm-10">
             <select
@@ -521,6 +512,18 @@ var ConditionRuleEditor = React.createClass({
                 value={this.state.condKey}
                 onChange={this.handleKeyChange}>
               {selectKey}
+            </select>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label className="col-sm-2 control-label">Operator</label>
+          <div className="col-sm-10">
+            <select
+                className="form-control"
+                value={this.state.condOp}
+                onChange={this.handleOpChange}>
+              {selectOp}
             </select>
           </div>
         </div>

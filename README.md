@@ -32,6 +32,14 @@ ListObjects my-bucket/users/dir
 
 勾选EnablePath选项时，上面这些权限会自动添加。
 
+### Build
+
+```
+npm install -g browserify
+npm install
+npm run build
+```
+
 # TODO
 
 + select/option for Effect/Action

@@ -246,7 +246,16 @@ var RuleEditor = React.createClass({
                 React.createElement('input', { type: 'checkbox',
                   checked: this.state.EnablePath,
                   onChange: this.handleEnablePathChange }),
-                '自动设置父目录权限'
+                '自动设置父目录权限',
+                React.createElement(
+                  'a',
+                  { href: 'https://github.com/rockuw/ram-policy-editor#enablepath' },
+                  React.createElement(
+                    'b',
+                    null,
+                    ' ? '
+                  )
+                )
               )
             )
           )
@@ -485,12 +494,12 @@ var ConditionRule = React.createClass({
       React.createElement(
         'td',
         null,
-        this.props.condOp
+        this.props.condKey
       ),
       React.createElement(
         'td',
         null,
-        this.props.condKey
+        this.props.condOp
       ),
       React.createElement(
         'td',
@@ -545,12 +554,12 @@ var ConditionRuleList = React.createClass({
             React.createElement(
               'th',
               null,
-              'Operation'
+              'Key'
             ),
             React.createElement(
               'th',
               null,
-              'Key'
+              'Operator'
             ),
             React.createElement(
               'th',
@@ -628,27 +637,6 @@ var ConditionRuleEditor = React.createClass({
         React.createElement(
           'label',
           { className: 'col-sm-2 control-label' },
-          'Operation'
-        ),
-        React.createElement(
-          'div',
-          { className: 'col-sm-10' },
-          React.createElement(
-            'select',
-            {
-              className: 'form-control',
-              value: this.state.condOp,
-              onChange: this.handleOpChange },
-            selectOp
-          )
-        )
-      ),
-      React.createElement(
-        'div',
-        { className: 'form-group' },
-        React.createElement(
-          'label',
-          { className: 'col-sm-2 control-label' },
           'Key'
         ),
         React.createElement(
@@ -661,6 +649,27 @@ var ConditionRuleEditor = React.createClass({
               value: this.state.condKey,
               onChange: this.handleKeyChange },
             selectKey
+          )
+        )
+      ),
+      React.createElement(
+        'div',
+        { className: 'form-group' },
+        React.createElement(
+          'label',
+          { className: 'col-sm-2 control-label' },
+          'Operator'
+        ),
+        React.createElement(
+          'div',
+          { className: 'col-sm-10' },
+          React.createElement(
+            'select',
+            {
+              className: 'form-control',
+              value: this.state.condOp,
+              onChange: this.handleOpChange },
+            selectOp
           )
         )
       ),
