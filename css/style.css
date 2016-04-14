@@ -32,3 +32,7 @@ body {
 .hint ul {
     margin-left: -15px;
 }
+
+#app-version {
+    display: inline;
+}

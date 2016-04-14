@@ -699,3 +699,10 @@ ReactDOM.render(
   <PolicyEditor />,
   document.getElementById('policy-editor')
 );
+
+var pkg = require('./package.json');
+
+ReactDOM.render(
+  <small> v{pkg.version}</small>,
+  document.getElementById('app-version')
+);
