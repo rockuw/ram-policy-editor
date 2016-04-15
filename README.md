@@ -2,6 +2,10 @@
 
 Visual RAM Policy Editor
 
+## Demo
+
+http://oss-demo.aliyuncs.com/ram-policy-editor/
+
 ## Usage
 
 ### Resources
