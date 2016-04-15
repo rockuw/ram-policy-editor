@@ -606,7 +606,7 @@ var PolicyEditor = React.createClass({
       var p = '';
       pieces.slice(1).map(function (dir) {
         prefixes.add(p);
-        p += (p ? '/' + dir : dir);
+        p += (dir + '/');
       });
     });
 
@@ -623,7 +623,7 @@ var PolicyEditor = React.createClass({
        * most cases this is prefered.
        */
       if (prefixes[prefixes.length - 1] !== '') {
-        prefixes[prefixes.length - 1] += '/*';
+        prefixes[prefixes.length - 1] += '*';
       }
 
       var rule = {
