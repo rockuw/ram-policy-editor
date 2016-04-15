@@ -31903,7 +31903,7 @@ module.exports = require('./lib/React');
 },{"./lib/React":59}],165:[function(require,module,exports){
 module.exports={
   "name": "ram-policy-editor",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Visual RAM Policy Editor",
   "main": "app.js",
   "dependencies": {
