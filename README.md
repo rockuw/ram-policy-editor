@@ -36,6 +36,60 @@ ListObjects my-bucket/users/dir
 
 勾选EnablePath选项时，上面这些权限会自动添加。
 
+### Examples
+
+#### Full access to a bucket
+
+对某个bucket（例如`my-bucket`）完全授权：
+
+添加一条规则：
+
+- Effect设置为`Allow`
+- Action选择`oss:*`
+- Resource填写为`my-bucket`和`my-bucket/*`
+- EnablePath不勾选
+
+注意：
+
+- 如果是只读权限，把`oss:*`换成`oss:Get*`;
+- 如果是只读权限，把`oss:*`换成`oss:Put*`;
+
+#### Full access to a dir
+
+对`my-bucket`下的`my-dir`完全授权：
+
+添加一条规则：
+
+- Effect设置为`Allow`
+- Action选择`oss:*`
+- Resource填写为`my-bucket/my-dir/*`
+- EnablePath勾选
+
+注意：
+
+- 如果是只读权限，把`oss:*`换成`oss:Get*`;
+- 如果是只读权限，把`oss:*`换成`oss:Put*`;
+
+#### Allow only specified IP
+
+只允许特定的IP来访问`my-bucket`下面的`my-dir`目录。
+
+添加一条规则：
+
+- Effect设置为`Allow`
+- Action选择`oss:Get*`
+- Resource填写为`my-bucket/my-dir/*`
+- EnablePath不勾选
+- 添加条件
+  - Key选择为`acs:SourceIp`
+  - Operator选择为`IpAddress`
+  - Value填具体的IP，如`40.32.9.125`
+
+注意：
+
+- 如果是只读权限，把`oss:*`换成`oss:Get*`;
+- 如果是只读权限，把`oss:*`换成`oss:Put*`;
+
 ### Build
 
 ```

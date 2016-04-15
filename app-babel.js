@@ -774,16 +774,24 @@ var PolicyEditor = React.createClass({
 
     var newPolicy = this.state.data;
     buckets.map(function (bucket) {
-      var prefixes = bucketPrefixes[bucket];
+      var prefixes = Array.from(bucketPrefixes[bucket]);
+      /*
+       * This allows list all objects under the last child dir, in
+       * most cases this is prefered.
+       */
+      if (prefixes[prefixes.length - 1] !== '') {
+        prefixes[prefixes.length - 1] += '/*';
+      }
+
       var rule = {
         RuleId: Math.random(),
         Effect: 'Allow',
         Action: ['oss:ListObjects'],
         Resource: ['acs:oss:*:*:' + bucket],
         Condition: [{
-          condOp: 'StringEquals',
+          condOp: 'StringLike',
           condKey: 'oss:Prefix',
-          condValue: Array.from(prefixes)
+          condValue: prefixes
         }, {
           condOp: 'StringEquals',
           condKey: 'oss:Delimiter',
