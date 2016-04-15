@@ -414,7 +414,13 @@ var ConditionRule = React.createClass({
       <tr>
         <td>{this.props.condKey}</td>
         <td>{this.props.condOp}</td>
-        <td>{this.props.condValue}</td>
+        <td>
+          {
+            this.props.condValue.map(function (x) {
+              return (<div key={x}>{x}</div>);
+            })
+          }
+        </td>
         <td>
           <a href="#" onClick={this.handleRemove}>
             <span className="glyphicon glyphicon-minus" aria-hidden="true"></span>
@@ -464,7 +470,7 @@ var ConditionRuleEditor = React.createClass({
     return {
       condOp: ConditionOpList[0],
       condKey: ConditionList[0],
-      condValue: ''
+      condValue: []
     };
   },
 
@@ -477,7 +483,7 @@ var ConditionRuleEditor = React.createClass({
   },
 
   handleValueChange: function (e) {
-    this.setState({condValue: e.target.value});
+    this.setState({condValue: e});
   },
 
   handleSubmit: function (e) {
@@ -488,7 +494,7 @@ var ConditionRuleEditor = React.createClass({
       this.setState({
         condOp: ConditionOpList[0],
         condKey: ConditionList[0],
-        condValue: ''
+        condValue: []
       });
     }
   },
@@ -531,10 +537,9 @@ var ConditionRuleEditor = React.createClass({
         <div className="form-group">
           <label className="col-sm-2 control-label">Value</label>
           <div className="col-sm-10">
-            <input
-                type="text"
-                className="form-control"
+            <TagsInput
                 value={this.state.condValue}
+                addOnBlur
                 onChange={this.handleValueChange}
             />
           </div>

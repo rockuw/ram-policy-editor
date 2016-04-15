@@ -504,7 +504,13 @@ var ConditionRule = React.createClass({
       React.createElement(
         'td',
         null,
-        this.props.condValue
+        this.props.condValue.map(function (x) {
+          return React.createElement(
+            'div',
+            { key: x },
+            x
+          );
+        })
       ),
       React.createElement(
         'td',
@@ -582,7 +588,7 @@ var ConditionRuleEditor = React.createClass({
     return {
       condOp: ConditionOpList[0],
       condKey: ConditionList[0],
-      condValue: ''
+      condValue: []
     };
   },
 
@@ -595,7 +601,7 @@ var ConditionRuleEditor = React.createClass({
   },
 
   handleValueChange: function (e) {
-    this.setState({ condValue: e.target.value });
+    this.setState({ condValue: e });
   },
 
   handleSubmit: function (e) {
@@ -606,7 +612,7 @@ var ConditionRuleEditor = React.createClass({
       this.setState({
         condOp: ConditionOpList[0],
         condKey: ConditionList[0],
-        condValue: ''
+        condValue: []
       });
     }
   },
@@ -684,10 +690,9 @@ var ConditionRuleEditor = React.createClass({
         React.createElement(
           'div',
           { className: 'col-sm-10' },
-          React.createElement('input', {
-            type: 'text',
-            className: 'form-control',
+          React.createElement(TagsInput, {
             value: this.state.condValue,
+            addOnBlur: true,
             onChange: this.handleValueChange
           })
         )
