@@ -1,3 +1,8 @@
+1.0.2 / 2016-04-15
+==================
+
+  * Add examples in README
+  * Allow list objects under the last dir
 
 1.0.1 / 2016-04-14
 ==================
