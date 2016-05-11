@@ -16,7 +16,7 @@ var ActionList = [{
   children: ['oss:GetObject', 'oss:PutObject', 'oss:DeleteObject', 'oss:GetObjectAcl', 'oss:PutObjectAcl', 'oss:ListParts', 'oss:AbortMultipartUpload', 'oss:ListObjects']
 }, {
   label: 'Bucket',
-  children: ['oss:PutBucket', 'oss:DeleteBucket', 'oss:GetBucketLocation', 'oss:ListMultipartUploads', 'oss:PutBucketAcl', 'oss:GetBucketAcl', 'oss:PutBucketReferer', 'oss:GetBucketReferer', 'oss:PutBucketLogging', 'oss:GetBucketLogging', 'oss:DeleteBucketLogging', 'oss:PutBucketWebsite', 'oss:GetBucketWebsite', 'oss:DeleteBucketWebsite', 'oss:PutBucketLifecycle', 'oss:GetBucketLifecycle', 'oss:DeleteBucketLifecycle', 'oss:PutBucketCors', 'oss:GetBucketCors', 'oss:DeleteBucketCors', 'oss:PutBucketReplication', 'oss:GetBucketReplication', 'oss:DeleteBucketReplication', 'oss:GetBucketReplicationLocation', 'oss:GetBucketReplicationProgress'] }];
+  children: ['oss:ListBuckets', 'oss:PutBucket', 'oss:DeleteBucket', 'oss:GetBucketLocation', 'oss:ListMultipartUploads', 'oss:PutBucketAcl', 'oss:GetBucketAcl', 'oss:PutBucketReferer', 'oss:GetBucketReferer', 'oss:PutBucketLogging', 'oss:GetBucketLogging', 'oss:DeleteBucketLogging', 'oss:PutBucketWebsite', 'oss:GetBucketWebsite', 'oss:DeleteBucketWebsite', 'oss:PutBucketLifecycle', 'oss:GetBucketLifecycle', 'oss:DeleteBucketLifecycle', 'oss:PutBucketCors', 'oss:GetBucketCors', 'oss:DeleteBucketCors', 'oss:PutBucketReplication', 'oss:GetBucketReplication', 'oss:DeleteBucketReplication', 'oss:GetBucketReplicationLocation', 'oss:GetBucketReplicationProgress'] }];
 
 var ConditionList = ['acs:SourceIp', 'acs:UserAgent', 'acs:CurrentTime', 'acs:SecureTransport', 'oss:Prefix', 'oss:Delimiter'];
 
@@ -31903,7 +31903,7 @@ module.exports = require('./lib/React');
 },{"./lib/React":59}],165:[function(require,module,exports){
 module.exports={
   "name": "ram-policy-editor",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Visual RAM Policy Editor",
   "main": "app.js",
   "dependencies": {
