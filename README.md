@@ -90,6 +90,17 @@ ListObjects my-bucket/users/dir
 - 如果是只读权限，把`oss:*`换成`oss:Get*`;
 - 如果是只读权限，把`oss:*`换成`oss:Put*`;
 
+#### Web console
+
+如果需要在阿里云的控制台用子账号访问，需要有`oss:ListBuckets`权限。
+
+需要额外添加一条规则：
+
+- Effect设置为`Allow`
+- Action选择`oss:ListBuckets`
+- Resource填写为`*`
+- EnablePath不勾选
+
 ### Build
 
 ```

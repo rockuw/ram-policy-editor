@@ -36,6 +36,7 @@ var ActionList = [
   {
     label: 'Bucket',
     children: [
+      'oss:ListBuckets',
       'oss:PutBucket',
       'oss:DeleteBucket',
       'oss:GetBucketLocation',
