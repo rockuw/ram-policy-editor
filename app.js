@@ -582,6 +582,70 @@ var ConditionEditor = React.createClass({
   }
 });
 
+var OSSObjectList = React.createClass({
+  getInitialState: function () {
+    var appServer = 'http://localhost:3000';
+    var bucket = 'js-sdk-bucket-sts';
+    var region = 'oss-cn-hangzhou';
+    var OSS = window.OSS;
+    var urllib = OSS.urllib;
+    var Buffer = OSS.Buffer;
+    OSS = OSS.Wrapper;
+    var STS = OSS.STS;
+    var applyTokenDo = function (func) {
+      var url = appServer;
+      return urllib.request(url, {
+        method: 'GET'
+      }).then(function (result) {
+        var creds = JSON.parse(result.data);
+        var client = new OSS({
+          region: region,
+          accessKeyId: creds.AccessKeyId,
+          accessKeySecret: creds.AccessKeySecret,
+          stsToken: creds.SecurityToken,
+          bucket: bucket
+        });
+
+        return func(client);
+      });
+    };
+
+    var self = this;
+    var listFiles = function (client) {
+      client.list({
+        'max-keys': 100
+      }).then(function (result) {
+        var objs = result.objects.map(function (x) {
+          return x.name;
+        });
+        self.setState({data: {
+          "Objects": objs
+        }});
+      }).catch(function (err) {
+        console.log(err);
+      });
+    }
+
+    applyTokenDo(listFiles);
+
+    return {
+      data: {
+        "Objects": []
+      }};
+  },
+  render: function () {
+    var list = this.state.data.Objects.map(function (x) {
+      return (<p>{x}</p>);
+    });
+
+    return (
+      <div className="OSSObjectList">
+        {list}
+      </div>
+    );
+  }
+});
+
 var PolicyEditor = React.createClass({
   getInitialState: function () {
     return {
@@ -710,13 +774,6 @@ var PolicyEditor = React.createClass({
 });
 
 ReactDOM.render(
-  <PolicyEditor />,
-  document.getElementById('policy-editor')
-);
-
-var pkg = require('./package.json');
-
-ReactDOM.render(
-  <small> v{pkg.version}</small>,
-  document.getElementById('app-version')
+  <OSSObjectList />,
+  document.getElementById('oss-list')
 );
