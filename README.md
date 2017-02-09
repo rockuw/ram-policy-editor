@@ -4,7 +4,7 @@ Visual RAM Policy Editor
 
 ## Demo
 
-http://oss-demo.aliyuncs.com/ram-policy-editor/
+http://gosspublic.alicdn.com/ram-policy-editor/index.html
 
 ## Usage
 
